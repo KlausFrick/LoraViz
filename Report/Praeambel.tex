@@ -1,0 +1,112 @@
+\documentclass[a4paper,10pt]{scrartcl}
+
+\usepackage{units}
+\usepackage{mathtools}
+%\usepackage{a4wide}
+\usepackage{bbm}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{graphicx, enumerate}
+\usepackage{psfrag}
+\usepackage[matrix, arrow, curve]{xy}
+\usepackage{array,tabularx}
+%\usepackage[square, comma, numbers]{natbib}
+\usepackage[unicode, a4paper]{hyperref}
+\usepackage{subfigure}
+\usepackage{algorithm2e}
+\usepackage{url}
+\usepackage{mathtools}
+\usepackage{pgfplots}
+\usepackage{siunitx}
+
+\newcounter{myFCounter}[section]
+\newcommand{\myFigure}[3]{%
+    \begin{center}\begin{minipage}[t]{\columnwidth}%
+    \begin{center}\refstepcounter{myFCounter}\vspace{1ex}%
+    \includegraphics[width=#1\columnwidth,keepaspectratio]{#2}\ \\%
+     Abb. \arabic{myFCounter}:\ \rm #3 
+    \vspace{1ex}\end{center}%
+    \end{minipage}\end{center}}
+    \newcommand\myColumnSep[1]{%
+\setlength{\columnsep}{#1}%
+}
+
+\newcommand{\inner}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\abs}[1]{\left| #1 \right|}
+
+%die folgenden Zeilen sind für die Kopf und Fusszeile
+%die eckigen Klammern betreffen die Titelseite, die geschwungenen Klammern das restliche Dokument 
+\usepackage[automark]{scrpage2}
+\pagestyle{scrheadings}
+\ihead{\includegraphics[width=0.25 \textwidth]{figures/NTB-FHO_LOGO_2}} % linke Kopfzeile 
+\chead{Estimating Outdoor Signal Strength of LoRaWAN} % mittlere Kopfzeile
+\ohead{\includegraphics[width=0.15 \textwidth]{figures/logo_thingslogic}} % rechte Kopfzeile
+%\cfoot[...]{\thepage} % mittlere Fusszeile 
+\ofoot[...]{\today} % rechte Fusszeile 
+\ifoot[...]{} 
+\setheadsepline{0.5pt}
+\setfootsepline{0.5pt}
+%Befehle für kopf und fusszeile fertig
+
+\setlength{\parindent}{0pt}
+\setlength{\footskip}{1cm}
+
+\linespread{1.5} %Für Zeilenabstand 1.5 muss linespreadfaktor auf 1.25 eingestellt werden.
+%\onehalfspacing%Zeilenabstand (alternativ zu linespread
+
+% Zeilenabstand verringern bei itemize
+\let\origitemize\itemize
+\def\itemize{\origitemize\itemsep0pt}
+\setlength{\topmargin}{-1.5cm}  		%	Abstand Seitenkopf vom oberen Rand plus 1 Inch
+\setlength{\textwidth}{17cm} 				%	{6.25in}  %Breite des Seitenrumpfes (15.8cm)
+\setlength{\oddsidemargin}{-0.5cm}	%	{0in} %Abstand Text vom linken Rand plus ein Inch (=2.54cm)
+\setlength{\textheight}{9.0in}  		%	Texthöhe ohne Kopfzeile und Fusszeile (23.9cm)
+\setlength{\headheight}{1.3cm}			%	Kopfzeilenhöhe
+\setlength{\headsep}{0.5cm}				%	Abstand Kopfzeile - Text
+%\setlength{\headsep}{1cm}						%	Abstand Kopfzeile - Text
+\setlength{\columnsep}{.5cm}				%	Abstand der 2 Kolonnen
+%
+\pagestyle{scrheadings}							%	Einzug bei Absatzbeginn unterdrücken
+
+%\renewcommand{\figurename}{Abb.}		%	Text zur Bildbeschriftung
+%\renewcommand{\tablename}{Tab.}			%	Text zur Tabellenbeschriftung
+%\renewcommand{\refname}{Literaturverzeichnis}
+%\let\mathmu\mu
+%\def\mu{\ensuremath{\mathmu}}
+
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{patterns}
+%\usetikzlibrary{angles,quotes}
+
+
+
+% theoremstyles 
+\theoremstyle{plain}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{ass}[thm]{Assumption}
+
+\newtheorem{assa}{Assumption}
+\renewcommand{\theassa}{\Alph{assa}}
+
+\theoremstyle{definition}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{alg}[thm]{Algorithm}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{dfn}[thm]{Definition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{que}{Question}
+\newtheorem{example}[thm]{Example}
+\newtheorem*{example*}{Example}
+
+\newtheorem*{dfn*}{Definition}
+\newtheorem*{alg*}{Algorithm}
+
+
+
+\theoremstyle{remark}
+\newtheorem{prob}{Problem}
+

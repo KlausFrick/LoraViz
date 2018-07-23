@@ -1,0 +1,43 @@
+\include{Praeambel}
+
+\pgfplotsset{compat=1.11}
+\begin{document}
+\include{Titelseite}
+
+\section{Introduction}\label{sec:intro}
+
+In the emerging field of Internet of Things (IoT) the paradigm of connecting literally any object to the internet is a key feature. Establishing an everyday life filled with wireless devices improving the aspects of our existence, however, imposes several requirements on these systems: long battery life, low price of devices and long-range coverage (\cite{Nolan2016, Augustin2016}).  LoRaWAN is a low-power wide-area network (LPWAN) protocol that accounts for the last requirement. It stands for Long Range Wide Area Network and is an open standard maintained by the LoRa Alliance (\cite{LoRaAlliance2015}). LoRa is the physical layer of the protocol. It is based on the Chirp Spread Spectrum (CSS) modulation technique and uses the ISM band between 863-870 MHz in Europe. 
+
+The topology of a LoRaWAN  is sketched in Figure \ref{fig:loraarch}. Several IoT devices send and receive data via the LoRaWAN protocol to and from one or more gateways simultaneously in a single hop. From there, all packages are forwarded to a network server via standard TCP/IP. The data can then be disaggregated and used for specific applications. The devices are identified by a unique ID, which is registered in the network server. There are several network provider as for example the open source project The Things Network (TTN).
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/LoRa_Arch}
+\caption{LoRa WAN Topology (taken from \cite{LoRaAlliance2015}).}\label{fig:loraarch}
+\end{figure}
+
+Due to the prime requirement of long range data transmission, field tests for LoRaWAN are mainly concerned with assessing signal strength and quality in dependence of the distance between device and gateway. There, different quality measures are studied (cf. \cite{Aref2014, Marais2017, }).
+\begin{enumerate}
+\item The Receiver Signal Strength Indicator (RSSI) ) is the total signal power received in milliwatts. The RSSI  is  measured  in  the  decibel-milliwatts  (dBm).
+\item The Signal-to-Noise ratio (SNR) is  a  ratio  between  the  level  of  the  signal  and  the  level  of noise.
+\item The packet-loss refers to frames that are not received by the network server. Such frames can be either not received at all by the gateway or received by the gateway but with a bad CRC (Cyclic Redundancy Check) so they can not be decoded.
+\end{enumerate}
+
+In this work we focus on the RSSI as quality measure of the network coverage. Under ideal conditions, the RSSI value has a logarithmic dependence on the distance $d$ of the device to the gateway, i.e.
+\begin{equation}\label{eqn:loglaw}
+\text{RSSI} = A -B \log_{10}(d)
+\end{equation}
+for some constants $A$ and $B$. In practice, however, the decay of signal strength also heavily depends on localized effects such as the surrounding elevation, environmental influences as well as buildings and vegetation that loom in the Fresnel zone of the device/gateway pair.   
+
+In order to generate a reliable heat map that predicts the RSSI values between measurement points, we employ techniques from geospatial statistics (cf. \cite{Cressi1993, Webster2007}). In particular, we use regression kriging that allows for the spatial variance structure of the measurements and hence yields RSSI predictions that are sensitive to localized effects. In our situation, regression kriging amounts to update the predictions of the logarithmic regression model above with spatially interpolated residuals that take into account the covariance structure of the neighborhood of the spatial point under consideration.  
+
+The constribution of this work is threefold:
+\begin{enumerate}
+
+\end{enumerate}
+
+\bibliographystyle{abbrv}
+\bibliography{literature}
+
+
+\end{document}
