@@ -31,10 +31,24 @@ for some constants $A$ and $B$. In practice, however, the decay of signal streng
 
 In order to generate a reliable heat map that predicts the RSSI values between measurement points, we employ techniques from geospatial statistics (cf. \cite{Cressi1993, Webster2007}). In particular, we use regression kriging that allows for the spatial variance structure of the measurements and hence yields RSSI predictions that are sensitive to localized effects. In our situation, regression kriging amounts to update the predictions of the logarithmic regression model above with spatially interpolated residuals that take into account the covariance structure of the neighborhood of the spatial point under consideration.  
 
-The constribution of this work is threefold:
+The contribution of this work is threefold:
 \begin{enumerate}
-
+\item 
 \end{enumerate}
+
+\section{Measurement Setup}\label{sec:setup}
+
+\begin{figure}[h!]\label{fig:device}
+\centering
+\includegraphics[width=0.4\textwidth]{figures/device}
+\caption{Measurement device consisting of an Arduino Mega 2650 microcontroller with a Dragino GPS Shield featuring LoRa}
+\end{figure}
+
+\section{Statistical Interpolation}\label{sec:kriging}
+
+\section{Web-App}\label{sec:app}
+
+\section{Discussion}\label{sec:disc}
 
 \bibliographystyle{abbrv}
 \bibliography{literature}
