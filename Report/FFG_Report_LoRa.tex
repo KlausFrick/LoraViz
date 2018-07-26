@@ -38,13 +38,89 @@ The contribution of this work is threefold:
 
 \section{Measurement Setup}\label{sec:setup}
 
+The mobile measuring device is a simple assembly of commodity electronic items with a light-weight code. The device consists of
+\begin{itemize}
+\item An Arduino Mega 2560 R3 microcontroller board.
+\item The Dragino LoRa and GPS shield \footnote{\url{http://www.dragino.com/products/lora/item/108-lora-gps-shield.html}}.
+\item An additional SD Card reader (we use an AZDelivery SPI Reader \footnote{\url{https://www.az-delivery.de/products/copy-of-spi-reader-micro-speicherkartenmodul-fur-arduino?ls=de}}).
+\end{itemize}
+In Figure \ref{fig:device} the assembled device is shown. 
+
 \begin{figure}[h!]\label{fig:device}
 \centering
-\includegraphics[width=0.4\textwidth]{figures/device}
-\caption{Measurement device consisting of an Arduino Mega 2650 microcontroller with a Dragino GPS Shield featuring LoRa}
+\includegraphics[width=0.2\textwidth]{figures/device}
+\caption{Measurement device consisting of an Arduino Mega 2650 microcontroller with a Dragino GPS/LoRa shield. The depicted device also has a DHT22 temperature and humidity sensor.}
 \end{figure}
 
+The Arduino is programmed such that on start-up each minute a LoRa package is sent containing a counter variable as payload. The code is based on the project ... and stores for each sent package the position and time data locally on an SD card. Initially the temperature and humidity was tracked as well by means of an DHT22 sensor (this was skipped later on). Table \ref{tab:dev} shows the first few lines of a device measurement file recorded on Dornbirn (Austria) November 2017. 
+
+% latex table generated in R 3.4.3 by xtable 1.8-2 package
+% Thu Jul 26 05:45:59 2018
+\begin{table}[h!]
+\centering
+\begin{tabular}{rrrrrlrr}
+  \hline
+  counter & sat & lat & long & alt & time & H & T \\ 
+  \hline
+   0 &   4 & 47.41 & 9.75 & 413.80 & 11/24/2017 14:25:102766  & 40.00 & 13.60 \\ 
+     1 &   4 & 47.41 & 9.75 & 413.80 & 11/24/2017 14:25:102766  & 40.00 & 13.60 \\ 
+     2 &   4 & 47.41 & 9.75 & 413.80 & 11/24/2017 14:25:102766  & 40.00 & 13.60 \\ 
+     3 &   4 & 47.41 & 9.75 & 448.20 & 11/24/2017 14:25:432297 & 40.80 & 13.60 \\ 
+     4 &   4 & 47.41 & 9.75 & 457.40 & 11/24/2017 14:26:482383 & 41.30 & 13.60 \\ 
+     5 &   5 & 47.41 & 9.74 & 459.50 & 11/24/2017 14:26:482383 & 41.10 & 13.00 \\ 
+   \hline
+\end{tabular}
+\caption{Data that is stored on the field-test device: The \texttt{counter} variable denotes the payload. The GPS coordinates are stored in \texttt{lat}, \texttt{long} and \texttt{alt} where \texttt{sat} denotes the number of satellites.}\label{tab:dev}   
+\end{table}
+
+The device is registered in the TTN (\emph{the things network}) backend such that during the measurements each nearby TTN gateway receives the package containing the counter payload and forwards it to the TTN network server. There, the individual packages are merged and stored. Figure \ref{fig:topology} depicts the principle network scheme. 
+
+\begin{figure}[h!]\label{fig:topology}
+\centering
+\includegraphics[width=0.8\textwidth]{figures/Topologie}
+\caption{Network Topology to measure the RSSI/SNR for each position and gateway. The mobile device sends integer counters which are or are not received by the gateways. The send the RSSI and SNR values to the TTN network server. Here The web application subscribes via MQTT and receives the data. This data is then merged with the position and time data of the device. The interger counter serves as identifier.}
+\end{figure}
+
+When the measurement process is finished, the data from the network server is gathered by means of an MQTT request and stored on an application server that also hosts the web application (sc. Section \ref{sec:app}). In Table \ref{tab:ttn} the first few lines of such a data set is shown. The \texttt{counter} variable corresponds to the payload that was sent by the test device, i.e. it serves as a link between the test device (and its position) and the received data. The gateways are encoded by means of a unique ID (\texttt{gtw\_id}) provided by TTN. In Table \ref{tab:ttn}, for example, there are three gateways in total. The counter \texttt{0} appears two times, i.e. one gateway has lost the package. The package containing the payload \texttt{1} has been received by all gateways, where as the next package has benn lost completely. For each received package the signal-to-noise ration \texttt{SNR} and the received signal strength indicator \text{rssi} are stored, which will be the basis of the statistical analysis introduced in Section \ref{sec:kriging}.
+
+
+% latex table generated in R 3.4.3 by xtable 1.8-2 package
+% Thu Jul 26 05:47:38 2018
+\begin{table}[h!]
+\centering
+\begin{tabular}{rrllrrl}
+  \hline
+  counter &   gtw\_id & time & rssi & snr & dataRate \\ 
+  \hline
+     0 &   eui-1020304050607080 &  & -102 & 8.30 & SF7BW125 \\ 
+     0 &   eui-9d4004f0211748e3 & 2017-11-24T14:24:37.339087Z & -91 & 8.80 & SF7BW125 \\ 
+     1 &   eui-9d42000db93e82a5 & 2017-11-24T14:25:42.465766Z & -114 & 0.00 & SF7BW125 \\ 
+     1 &   eui-9d4004f0211748e3 & 2017-11-24T14:25:42.455736Z & -109 & 3.20 & SF7BW125 \\ 
+     1 &   eui-1020304050607080 &  & -107 & 8.30 & SF7BW125 \\ 
+     3 &   eui-9d42000db93e82a5 & 2017-11-24T14:26:47.573741Z & -112 & 2.20 & SF7BW125 \\ 
+     3 &   eui-9d4004f0211748e3 & 2017-11-24T14:26:47.566753Z & -89 & 9.80 & SF7BW125 \\ 
+   \hline
+\end{tabular}
+\caption{Data file gathered from the TTN network server by means of an MQTT request. Each gateway has a unique ID, i.e. here three gateways have been in reach. The package with payload 2 has been lost for all gateways.}\label{tab:ttn}
+\end{table}
+
+On the application server the data file from the TTN backend is split up in separate tables for each gateway and these tables are then merged with the position information of the device by means of the counter variable. These tables are the basis of the statistical analysis in Section \ref{sec:kriging}
+
+
 \section{Statistical Interpolation}\label{sec:kriging}
+
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/measurements}
+\caption{Measurement positions in the Dornbirn area: The gateway (\emph{Faulturm}) is marked with the blue sign and the red dots correspond to measurements that were received by the gateway. The higher the RSSI value, the darker the red shade. Obviously close-by measurements exhibit a better RSSI value, however, there are also localized effects that can not be explained by the distance only. Gray dots indicated measurement positions with package loss.}\label{fig:meas}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/loglaw}
+\caption{RSSI values vs. device/gateway distance for the \emph{Faulturm} gateway: The measurement values are shown as blue markers and the logarithmic model that was fitted to the data corresponds to the orange line.}\label{fig:law}
+\end{figure}
 
 \section{Web-App}\label{sec:app}
 
