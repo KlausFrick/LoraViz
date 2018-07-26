@@ -52,7 +52,7 @@ In Figure \ref{fig:device} the assembled device is shown.
 \caption{Measurement device consisting of an Arduino Mega 2650 microcontroller with a Dragino GPS/LoRa shield. The depicted device also has a DHT22 temperature and humidity sensor.}
 \end{figure}
 
-The Arduino is programmed such that on start-up each minute a LoRa package is sent containing a counter variable as payload. The code is based on the project ... and stores for each sent package the position and time data locally on an SD card. Initially the temperature and humidity was tracked as well by means of an DHT22 sensor (this was skipped later on). Table \ref{tab:dev} shows the first few lines of a device measurement file recorded on Dornbirn (Austria) November 2017. 
+The Arduino is programmed such that on start-up each minute a LoRa package is sent containing a counter variable as payload. The code is based Arduino-LMIC library\footnote{\url{https://github.com/matthijskooijman/arduino-lmic/}} and stores for each sent package the position and time data locally on an SD card. Initially the temperature and humidity was tracked as well by means of an DHT22 sensor (this was skipped later on). Table \ref{tab:dev} shows the first few lines of a device measurement file recorded on Dornbirn (Austria) November 2017. 
 
 % latex table generated in R 3.4.3 by xtable 1.8-2 package
 % Thu Jul 26 05:45:59 2018
@@ -81,7 +81,7 @@ The device is registered in the TTN (\emph{the things network}) backend such tha
 \caption{Network Topology to measure the RSSI/SNR for each position and gateway. The mobile device sends integer counters which are or are not received by the gateways. The send the RSSI and SNR values to the TTN network server. Here The web application subscribes via MQTT and receives the data. This data is then merged with the position and time data of the device. The interger counter serves as identifier.}
 \end{figure}
 
-When the measurement process is finished, the data from the network server is gathered by means of an MQTT request and stored on an application server that also hosts the web application (sc. Section \ref{sec:app}). In Table \ref{tab:ttn} the first few lines of such a data set is shown. The \texttt{counter} variable corresponds to the payload that was sent by the test device, i.e. it serves as a link between the test device (and its position) and the received data. The gateways are encoded by means of a unique ID (\texttt{gtw\_id}) provided by TTN. In Table \ref{tab:ttn}, for example, there are three gateways in total. The counter \texttt{0} appears two times, i.e. one gateway has lost the package. The package containing the payload \texttt{1} has been received by all gateways, where as the next package has benn lost completely. For each received package the signal-to-noise ration \texttt{SNR} and the received signal strength indicator \text{rssi} are stored, which will be the basis of the statistical analysis introduced in Section \ref{sec:kriging}.
+When the measurement process is finished, the data from the network server is gathered by means of an MQTT request and stored on an application server that also hosts the web application (sc. Section \ref{sec:app}). In Table \ref{tab:ttn} the first few lines of such a data set is shown. The \texttt{counter} variable corresponds to the payload that was sent by the test device, i.e. it serves as a link between the test device (and its position) and the received data. The gateways are encoded by means of a unique ID (\texttt{gtw\_id}) provided by TTN. In Table \ref{tab:ttn}, for example, there are three gateways in total. The counter \texttt{0} appears two times, i.e. one gateway has lost the package. The package containing the payload \texttt{1} has been received by all gateways, where as the next package has been lost completely. For each received package the signal-to-noise ration \texttt{SNR} and the received signal strength indicator \text{rssi} are stored, which will be the basis of the statistical analysis introduced in Section \ref{sec:kriging}.
 
 
 % latex table generated in R 3.4.3 by xtable 1.8-2 package
@@ -108,6 +108,8 @@ On the application server the data file from the TTN backend is split up in sepa
 
 
 \section{Statistical Interpolation}\label{sec:kriging}
+
+In this section we describe the proposed algorithm to produce an RSSI heat map. The basis for the heat map are the RSSI values measured for each gateway at different discrete positions for the field test device as shown in Figure \ref{fig:meas}. The blue marker in the Figure indicates the gateway position (here a gateway located at the \emph{Faulturm} in a purification plant in Dornbirn (Austria)). The red dots correspond to device positions where the color encodes the measured RSSI value. Obviously, close-by measurement points exhibit a larger RSSI value than more remote locations, however there are localized effects visible that can not be explained by the device-gateway distance only. Gray points belong to positions where the packages have been lost. 
 
 
 \begin{figure}[h!]
